@@ -19,14 +19,8 @@ requirements:
     - setuptools
   run:
     - python
-    - numpy
-    - pandas
-    - netcdf4
-    - scipy
-    - bottleneck
-    - dask >=0.6
-    - h5netcdf
-    - cyordereddict  # [not py>=35]
+    - numpy >=1.11
+    - pandas >=0.18.0
 
 test:
   imports:

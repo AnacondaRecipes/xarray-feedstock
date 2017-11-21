@@ -19,13 +19,7 @@ requirements:
   run:
     - python
     - numpy >=1.11
-    - pandas >=0.18
-    - netcdf4
-    - scipy
-    - bottleneck
-    - dask >=0.9
-    - h5netcdf
-    - cyordereddict  # [not py>=35]
+    - pandas >=0.18.0
 
 test:
   imports:

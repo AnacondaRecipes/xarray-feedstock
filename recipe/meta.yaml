@@ -19,6 +19,7 @@ requirements:
     - python >=3.7
     - pip
     - setuptools_scm
+    - wheel
 
   run:
     - python >=3.7
@@ -26,6 +27,7 @@ requirements:
     - pandas >=1.0
     # Drop support for python 3.6 https://github.com/pydata/xarray/pull/4720
     - setuptools >=40.4 # For pkg_resources
+    - typing-extensions
 
 test:
   imports:
@@ -33,12 +35,18 @@ test:
     - xarray.backends
   requires:
     - pytest
+    - pip
+  commands:
+    - pip check
 
 about:
   home: https://github.com/pydata/xarray
   license: Apache-2.0
   license_file: LICENSE
+  license_family: Apache
   summary: N-D labeled arrays and datasets in Python.
+  dev_url: https://github.com/pydata/xarray
+  doc_url: http://xarray.pydata.org/en/stable
 
 extra:
   recipe-maintainers:

@@ -1,4 +1,4 @@
-{% set version = "0.18.0" %}
+{% set version = "0.18.2" %}
 
 package:
   name: xarray
@@ -6,7 +6,7 @@ package:
 
 source:
   url: https://pypi.io/packages/source/x/xarray/xarray-{{ version }}.tar.gz
-  sha256: c0b0d24ee43db2bec14a95503266c81181586174004d1b60860c1091e4f74ac8
+  sha256: 5d2e72a228286fcf60f66e16876bd27629a1a70bf64822c565f16515c4d10284
 
 build:
   noarch: python
@@ -19,6 +19,7 @@ requirements:
     - python >=3.7
     - pip
     - setuptools_scm
+    - wheel
 
   run:
     - python >=3.7
@@ -26,6 +27,7 @@ requirements:
     - pandas >=1.0
     # Drop support for python 3.6 https://github.com/pydata/xarray/pull/4720
     - setuptools >=40.4 # For pkg_resources
+    - typing-extensions
 
 test:
   imports:
@@ -33,12 +35,18 @@ test:
     - xarray.backends
   requires:
     - pytest
+    - pip
+  commands:
+    - pip check
 
 about:
   home: https://github.com/pydata/xarray
   license: Apache-2.0
   license_file: LICENSE
+  license_family: Apache
   summary: N-D labeled arrays and datasets in Python.
+  dev_url: https://github.com/pydata/xarray
+  doc_url: http://xarray.pydata.org/en/stable
 
 extra:
   recipe-maintainers:

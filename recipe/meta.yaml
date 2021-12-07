@@ -16,21 +16,21 @@ build:
 requirements:
   host:
     # Drop support for python 3.6 https://github.com/pydata/xarray/pull/4720
-    - python >=3.7
+    - python
     - pip
-    - setuptools >=42
+    - setuptools
     - setuptools_scm_git_archive
-    - setuptools_scm >=3.4
+    - setuptools_scm
     - toml
     - wheel
 
   run:
     - python >=3.7
-    - numpy >=1.17
-    - pandas >=1.0
+    - numpy >=1.18
+    - pandas >=1.1
     # Drop support for python 3.6 https://github.com/pydata/xarray/pull/4720
     - setuptools >=40.4 # For pkg_resources
-    - typing-extensions
+    - typing-extensions >=3.7
 
 test:
   imports:
@@ -38,6 +38,7 @@ test:
     - xarray.backends
   requires:
     - pytest
+    - python <3.10
     - pip
   commands:
     - pip check

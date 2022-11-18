@@ -1,45 +1,40 @@
-{% set version = "0.20.1" %}
+{% set name = "xarray" %}
+{% set version = "2022.11.0" %}
 
 package:
-  name: xarray
+  name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/x/xarray/xarray-{{ version }}.tar.gz
-  sha256: 9c0bffd8b55fdef277f8f6c817153eb51fa4e58653a7ad92eaed9984164b7bdb
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: 3008a302877f87a0f9043b1f01a4ad4e85b668bbdd38d488764098624632f527
 
 build:
-  noarch: python
   number: 0
+  skip:  True  # [py<38]
   script: {{ PYTHON }} -m pip install . --no-deps -vv
 
 requirements:
   host:
-    # Drop support for python 3.6 https://github.com/pydata/xarray/pull/4720
     - python
     - pip
     - setuptools
     - setuptools_scm_git_archive
-    - setuptools_scm >=3.4
+    - setuptools_scm
     - toml
     - wheel
 
   run:
-    - python >=3.7
-    - numpy >=1.18
-    - pandas >=1.1
-    # Drop support for python 3.6 https://github.com/pydata/xarray/pull/4720
-    - setuptools >=40.4 # For pkg_resources
-    - importlib-metadata
-    - typing-extensions >=3.7
+    - python
+    - numpy >=1.20
+    - pandas >=1.3
+    - packaging >=21.0
 
 test:
   imports:
     - xarray
     - xarray.backends
   requires:
-    - pytest
-    - python <3.10
     - pip
   commands:
     - pip check
@@ -50,8 +45,20 @@ about:
   license_file: LICENSE
   license_family: Apache
   summary: N-D labeled arrays and datasets in Python.
+  description: |
+    xarray (formerly xray) is an open source project and Python package
+    that makes working with labelled multi-dimensional arrays simple,
+    efficient, and fun!
+
+    xarray introduces labels in the form of dimensions, coordinates and
+    attributes on top of raw NumPy_-like arrays, which allows for a more
+    intuitive, more concise, and less error-prone developer experience.
+    The package includes a large and growing library of domain-agnostic functions for advanced analytics and visualization with these data structures.
+
+    xarray was inspired by and borrows heavily from pandas_, the popular data analysis package focused on labelled tabular data.
+    It is particularly tailored to working with netCDF_ files, which were the source of xarray's data model, and integrates tightly with dask_ for parallel computing.
   dev_url: https://github.com/pydata/xarray
-  doc_url: http://xarray.pydata.org/en/stable
+  doc_url: https://docs.xarray.dev/en/stable/
 
 extra:
   recipe-maintainers:

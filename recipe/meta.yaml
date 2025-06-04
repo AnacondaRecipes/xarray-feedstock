@@ -34,6 +34,9 @@ requirements:
 #       compression='blosc_*' requires netCDF lib >= 4.9.0
 {% set deselect_tests = " --deselect=test_backends.py::TestNetCDF4Data::test_compression_encoding" %}
 {% set deselect_tests = deselect_tests + " --deselect=test_backends.py::TestNetCDF4Data::test_roundtrip_mask_and_scale" %}
+# E   PermissionError: [WinError 32] The process cannot access the file because it is being used by another process
+{% set deselect_tests = deselect_tests + " --deselect=test_tutorial.py::TestLoadDataset::test_download_from_github_load_without_cache" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=test_tutorial.py::TestLoadDataTree::test_download_from_github_load_without_cache" %}  # [win]
 
 test:
   imports:

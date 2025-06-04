@@ -55,7 +55,7 @@ test:
     - netcdf4
 
 about:
-  home: https://github.com/pydata/xarray
+  home: https://xarray.dev
   license: Apache-2.0
   license_file: LICENSE
   license_family: Apache

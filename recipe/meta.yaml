@@ -33,7 +33,7 @@ requirements:
 # E   netCDF4._netCDF4.NetCDF4MissingFeatureException:
 #       compression='blosc_*' requires netCDF lib >= 4.9.0
 {% set deselect_tests = " --deselect=test_backends.py::TestNetCDF4Data::test_compression_encoding" %}
-{% set deselect_tests = " --deselect=test_backends.py::TestNetCDF4Data::test_roundtrip_mask_and_scale" %}
+{% set deselect_tests = deselect_tests + " --deselect=test_backends.py::TestNetCDF4Data::test_roundtrip_mask_and_scale" %}
 
 test:
   imports:

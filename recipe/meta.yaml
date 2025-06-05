@@ -1,7 +1,5 @@
 {% set name = "xarray" %}
-
-{% set version = "2024.11.0" %}
-
+{% set version = "2025.4.0" %}
 
 package:
   name: {{ name|lower }}
@@ -9,42 +7,55 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-
-  sha256: 1ccace44573ddb862e210ad3ec204210654d2c750bec11bbe7d842dfc298591f
+  sha256: 2a89cd6a1dfd589aa90ac45f4e483246f31fc641836db45dd2790bb78bd333dc
 
 build:
   number: 0
-  skip:  True  # [py<310]
+  script_env:
+    - SETUPTOOLS_SCM_PRETEND_VERSION={{ version }}
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
-
+  skip:  True  # [py<310]
 
 requirements:
   host:
     - python
     - pip
-    - setuptools
-    - setuptools_scm
     - wheel
-
+    - setuptools >=42
+    - setuptools_scm >=7
   run:
     - python
-
     - numpy >=1.24
     - pandas >=2.1
     - packaging >=23.2
 
+# Needs netcdf >=4.9.0, latest in the main channel is 4.8.1.
+# E   netCDF4._netCDF4.NetCDF4MissingFeatureException:
+#       compression='blosc_*' requires netCDF lib >= 4.9.0
+{% set deselect_tests = " --deselect=test_backends.py::TestNetCDF4Data::test_compression_encoding" %}
+{% set deselect_tests = deselect_tests + " --deselect=test_backends.py::TestNetCDF4Data::test_roundtrip_mask_and_scale" %}
+# E   PermissionError: [WinError 32] The process cannot access the file because it is being used by another process
+{% set deselect_tests = deselect_tests + " --deselect=test_tutorial.py::TestLoadDataset::test_download_from_github_load_without_cache" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=test_tutorial.py::TestLoadDataTree::test_download_from_github_load_without_cache" %}  # [win]
 
 test:
   imports:
     - xarray
     - xarray.backends
-  requires:
-    - pip
   commands:
     - pip check
+    - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
+    - pytest -v --pyargs {{ deselect_tests }} xarray.tests
+  requires:
+    - pip
+    - pytest
+    - pooch
+    - scipy
+    # TODO: pin netcdf4 >=4.9.0 when it was available.
+    - netcdf4
 
 about:
-  home: https://github.com/pydata/xarray
+  home: https://xarray.dev
   license: Apache-2.0
   license_file: LICENSE
   license_family: Apache
@@ -62,7 +73,7 @@ about:
     xarray was inspired by and borrows heavily from pandas_, the popular data analysis package focused on labelled tabular data.
     It is particularly tailored to working with netCDF_ files, which were the source of xarray's data model, and integrates tightly with dask_ for parallel computing.
   dev_url: https://github.com/pydata/xarray
-  doc_url: https://docs.xarray.dev/en/stable/
+  doc_url: https://docs.xarray.dev
 
 extra:
   recipe-maintainers:

@@ -1,5 +1,5 @@
 {% set name = "xarray" %}
-{% set version = "2025.4.0" %}
+{% set version = "2025.10.1" %}
 
 package:
   name: {{ name|lower }}
@@ -7,51 +7,59 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 2a89cd6a1dfd589aa90ac45f4e483246f31fc641836db45dd2790bb78bd333dc
+  sha256: 3c2b5ad7389825bd624ada5ff26b01ac54b1aae72e2fe0d724d81d40a2bf5785
 
 build:
   number: 0
   script_env:
     - SETUPTOOLS_SCM_PRETEND_VERSION={{ version }}
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
-  skip:  True  # [py<310]
+  skip:  True  # [py<311]
 
 requirements:
   host:
     - python
     - pip
     - wheel
-    - setuptools >=42
-    - setuptools_scm >=7
+    - setuptools >=77.0.3
+    - setuptools_scm >=8
   run:
     - python
-    - numpy >=1.24
-    - pandas >=2.1
-    - packaging >=23.2
+    - numpy >=1.26
+    - pandas >=2.2
+    - packaging >=24.1
+  run_constrained:
+    - scipy >=1.13
+    - numbagg >=0.8
+    - flox >=0.9
+    - netcdf4 >=1.6.0
+    - zarr >=2.18
+    - sparse >=0.15
+    - cartopy >=0.23
 
-# Needs netcdf >=4.9.0, latest in the main channel is 4.8.1.
-# E   netCDF4._netCDF4.NetCDF4MissingFeatureException:
-#       compression='blosc_*' requires netCDF lib >= 4.9.0
-{% set deselect_tests = " --deselect=test_backends.py::TestNetCDF4Data::test_compression_encoding" %}
-{% set deselect_tests = deselect_tests + " --deselect=test_backends.py::TestNetCDF4Data::test_roundtrip_mask_and_scale" %}
-# E   PermissionError: [WinError 32] The process cannot access the file because it is being used by another process
-{% set deselect_tests = deselect_tests + " --deselect=test_tutorial.py::TestLoadDataset::test_download_from_github_load_without_cache" %}  # [win]
-{% set deselect_tests = deselect_tests + " --deselect=test_tutorial.py::TestLoadDataTree::test_download_from_github_load_without_cache" %}  # [win]
+# hdf5 not build with szip support
+{% set deselect_tests = " --deselect=test_compression_encoding[szip]" %}
+
 
 test:
+  source_files:
+    - conftest.py
+    - pyproject.toml
   imports:
     - xarray
     - xarray.backends
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
-    - pytest -v --pyargs {{ deselect_tests }} xarray.tests
+    - pytest . --pyargs xarray.tests {{ deselect_tests }} -v -m "not (flaky or mypy or network or slow or slow_hypothesis)" -o addopts="[--strict-markers,--strict-config]"
   requires:
     - pip
     - pytest
+    - pytest-xdist
+    - pytest-timeout
+    - pytest-asyncio
     - pooch
     - scipy
-    # TODO: pin netcdf4 >=4.9.0 when it was available.
     - netcdf4
 
 about:

@@ -38,8 +38,7 @@ requirements:
     - cartopy >=0.23
 
 # hdf5 not build with szip support
-{% set deselect_tests = " --deselect=test_compression_encoding[szip]" %}
-
+{% set deselect_tests = "test_compression_encoding[szip]" %}
 
 test:
   source_files:
@@ -51,7 +50,7 @@ test:
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
-    - pytest . --pyargs xarray.tests {{ deselect_tests }} -v -m "not (flaky or mypy or network or slow or slow_hypothesis)" -o addopts="[--strict-markers,--strict-config]"
+    - pytest . --pyargs xarray.tests -k "{{ deselect_tests }}" -v -m "not (flaky or mypy or network or slow or slow_hypothesis)" -o addopts="[--strict-markers,--strict-config]"
   requires:
     - pip
     - pytest

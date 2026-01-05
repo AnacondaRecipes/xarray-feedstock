@@ -1,20 +1,18 @@
 {% set name = "xarray" %}
-{% set version = "2025.10.1" %}
+{% set version = "2025.12.0" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 3c2b5ad7389825bd624ada5ff26b01ac54b1aae72e2fe0d724d81d40a2bf5785
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: 73f6a6fadccc69c4d45bdd70821a47c72de078a8a0313ff8b1e97cd54ac59fed
 
 build:
   number: 0
-  script_env:
-    - SETUPTOOLS_SCM_PRETEND_VERSION={{ version }}
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
-  skip:  True  # [py<311]
+  skip:  true  # [py<311]
 
 requirements:
   host:
@@ -26,20 +24,25 @@ requirements:
   run:
     - python
     - numpy >=1.26
-    - pandas >=2.2
     - packaging >=24.1
+    - pandas >=2.2
   run_constrained:
     - scipy >=1.13
+    # accel
     - numbagg >=0.8
+    - numba >=0.62
     - flox >=0.9
+    # io
     - netcdf4 >=1.6.0
     - zarr >=2.18
     - sparse >=0.15
+    # viz
     - cartopy >=0.23
+    - matplotlib-base >=3.8
 
 # hdf5 not build with szip support
-{% set deselect_tests = "test_compression_encoding[szip]" %}
-
+{% set deselect_tests = " --deselect=test_backends.py::TestNetCDF4Data::test_compression_encoding" %}
+{% set deselect_tests = deselect_tests + " --deselect=test_backends_datatree.py::TestNetCDF4DataTree::test_compression_encoding" %}
 test:
   source_files:
     - conftest.py
@@ -50,7 +53,7 @@ test:
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
-    - pytest . --pyargs xarray.tests -k "not ({{ deselect_tests }})" -v -m "not (flaky or mypy or network or slow or slow_hypothesis)" -o addopts="[--strict-markers,--strict-config]"
+    - pytest . --pyargs xarray.tests {{ deselect_tests }} -v -m "not (flaky or mypy or network or slow or slow_hypothesis)" -o addopts="[--strict-markers,--strict-config]"
   requires:
     - pip
     - pytest

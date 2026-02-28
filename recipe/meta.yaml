@@ -1,5 +1,7 @@
 {% set name = "xarray" %}
-{% set version = "2025.12.0" %}
+{% set version = "2026.2.0" %}
+{% set deselect_tests = " --deselect=test_backends.py::TestNetCDF4Data::test_compression_encoding" %}
+{% set deselect_tests = 'deselect_tests + " --deselect=test_backends_datatree.py::TestNetCDF4DataTree::test_compression_encoding"' %}
 
 package:
   name: {{ name|lower }}
@@ -7,20 +9,20 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 73f6a6fadccc69c4d45bdd70821a47c72de078a8a0313ff8b1e97cd54ac59fed
+  sha256: 978b6acb018770554f8fd964af4eb02f9bcc165d4085dbb7326190d92aa74bcf
 
 build:
   number: 0
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
-  skip:  true  # [py<311]
+  skip: true  # [py<311]
 
 requirements:
   host:
     - python
     - pip
-    - wheel
     - setuptools >=77.0.3
     - setuptools_scm >=8
+    - setuptools-scm >=8
   run:
     - python
     - numpy >=1.26
@@ -33,16 +35,15 @@ requirements:
     - numba >=0.62
     - flox >=0.9
     # io
-    - netcdf4 >=1.6.0
+    - netCDF4 >=1.6.0
     - zarr >=2.18
     - sparse >=0.15
     # viz
     - cartopy >=0.23
     - matplotlib-base >=3.8
+    - h5netcdf >=1.4.0
 
 # hdf5 not build with szip support
-{% set deselect_tests = " --deselect=test_backends.py::TestNetCDF4Data::test_compression_encoding" %}
-{% set deselect_tests = deselect_tests + " --deselect=test_backends_datatree.py::TestNetCDF4DataTree::test_compression_encoding" %}
 test:
   source_files:
     - conftest.py

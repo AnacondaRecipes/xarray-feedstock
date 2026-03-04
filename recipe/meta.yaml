@@ -41,8 +41,9 @@ requirements:
     - cartopy >=0.23
     - matplotlib-base >=3.8
 
+{% set deselect_tests = "" %}
 # hdf5 not build with szip support
-{% set deselect_tests = " --deselect=test_backends.py::TestNetCDF4Data::test_compression_encoding" %}
+{% set deselect_tests = deselect_tests + " --deselect=test_backends.py::TestNetCDF4Data::test_compression_encoding" %}
 {% set deselect_tests = deselect_tests + " --deselect=test_backends_datatree.py::TestNetCDF4DataTree::test_compression_encoding" %}
 test:
   source_files:

@@ -27,14 +27,16 @@ requirements:
     - packaging >=24.1
     - pandas >=2.2
   run_constrained:
-    - scipy >=1.13
     # accel
+    - scipy >=1.13
     - numbagg >=0.8
     - numba >=0.62
     - flox >=0.9
     # io
     - netcdf4 >=1.6.0
+    - h5netcdf >=1.4.0
     - zarr >=2.18
+    # etc
     - sparse >=0.15
     # viz
     - cartopy >=0.23

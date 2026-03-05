@@ -66,6 +66,8 @@ test:
     - scipy
     - netcdf4
     - pytz
+    # using >=3 will cause TestDataset.test_repr to fail with: assert "<xarray.Dataset> Size: 2kB\nDimensions:...
+    - pandas <3
 
 about:
   home: https://xarray.dev

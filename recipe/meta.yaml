@@ -50,11 +50,6 @@ requirements:
 
 {% set deselect_tests = deselect_tests + " --deselect=test_dataset.py::TestDataset::test_repr" %}
 
-# Tests related to incompatibility with numpy >=2.0 combined with other packages.
-#{% set deselect_tests = deselect_tests + " --deselect=test_dataarray.py::TestDataArray::test_curvefit_helpers" %}
-# Test functionality may cause runtime failure
-#{% set deselect_tests = deselect_tests + " --deselect=test_variable.py::TestIndexVariable::test_concat_periods" %}
-
 test:
   source_files:
     - conftest.py

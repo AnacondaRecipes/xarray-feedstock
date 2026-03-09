@@ -25,7 +25,7 @@ requirements:
     # numpy max cap is added here due to compatibility issue discovered by test failure (test_concat_periods)
     # with numpy>=2. Issue seems to be already known: https://github.com/pydata/xarray/issues/11189
     # this is a conservative cap. remove upper bound once fixed upstream.
-    - numpy >=1.26,<2.4     # [py>=313]
+    - numpy >=1.26,<2.4
     - packaging >=24.1
     - pandas >=2.2
   run_constrained:

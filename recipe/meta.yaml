@@ -22,9 +22,8 @@ requirements:
     - setuptools_scm >=8
   run:
     - python
-    # numpy max cap is added here due to compatibility issue discovered by test failure (test_concat_periods)
-    # with numpy>=2. Issue seems to be already known: https://github.com/pydata/xarray/issues/11189
-    # this is a conservative cap. remove upper bound once fixed upstream.
+    # numpy 2.4+ introduced behavior changes which may affect usage corner cases (affects visible in
+    # tests: test_curvefit_helpers, test_concat_periods). Added max cap to avoid the issue.
     - numpy >=1.26,<2.4
     - packaging >=24.1
     - pandas >=2.2

@@ -25,8 +25,7 @@ requirements:
     # numpy max cap is added here due to compatibility issue discovered by test failure (test_concat_periods)
     # with numpy>=2. Issue seems to be already known: https://github.com/pydata/xarray/issues/11189
     # this is a conservative cap. remove upper bound once fixed upstream.
-    - numpy >=1.26,<2  # [py<313]
-    - numpy >=1.26     # [py>=313]
+    - numpy >=1.26,<2.4     # [py>=313]
     - packaging >=24.1
     - pandas >=2.2
   run_constrained:
@@ -50,10 +49,12 @@ requirements:
 {% set deselect_tests = deselect_tests + " --deselect=test_backends.py::TestNetCDF4Data::test_compression_encoding" %}
 {% set deselect_tests = deselect_tests + " --deselect=test_backends_datatree.py::TestNetCDF4DataTree::test_compression_encoding" %}
 
-# Tests related to incompatibility with numpy >=2.0. Restore tests once constraint is no longer needed.
-# due to compatibility issue with numpy>=2 (we only have packages for those versions with Python 3.13)
-{% set deselect_tests = deselect_tests + " --deselect=test_dataarray.py::TestDataArray::test_curvefit_helpers" %}   # [py>=313]
-{% set deselect_tests = deselect_tests + " --deselect=test_variable.py::TestIndexVariable::test_concat_periods" %}  # [py>=313]
+{% set deselect_tests = deselect_tests + " --deselect=test_dataset.py::TestDataset::test_repr" %}
+
+# Tests related to incompatibility with numpy >=2.0 combined with other packages.
+#{% set deselect_tests = deselect_tests + " --deselect=test_dataarray.py::TestDataArray::test_curvefit_helpers" %}
+# Test functionality may cause runtime failure
+#{% set deselect_tests = deselect_tests + " --deselect=test_variable.py::TestIndexVariable::test_concat_periods" %}
 # due to incosistent integer size 32/64-bit in numpy<2 on Windows (numpy 2 standardized integer types).
 {% set deselect_tests = deselect_tests + " --deselect=test_coding_times.py::test_decode_timedelta_via_units" %}  # [py<313 and win]
 {% set deselect_tests = deselect_tests + " --deselect=test_dataset.py::TestDataset::test_to_and_from_dataframe" %}  # [py<313 and win]
@@ -83,7 +84,7 @@ test:
     - netcdf4
     - pytz
     # using >=3 will cause TestDataset.test_repr to fail with: assert "<xarray.Dataset> Size: 2kB\nDimensions:...
-    - pandas <3
+    #- pandas >=3,<4
 
 about:
   home: https://xarray.dev

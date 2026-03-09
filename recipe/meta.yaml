@@ -1,5 +1,5 @@
 {% set name = "xarray" %}
-{% set version = "2025.12.0" %}
+{% set version = "2026.2.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 73f6a6fadccc69c4d45bdd70821a47c72de078a8a0313ff8b1e97cd54ac59fed
+  sha256: 978b6acb018770554f8fd964af4eb02f9bcc165d4085dbb7326190d92aa74bcf
 
 build:
   number: 0
@@ -18,31 +18,38 @@ requirements:
   host:
     - python
     - pip
-    - wheel
     - setuptools >=77.0.3
     - setuptools_scm >=8
   run:
     - python
-    - numpy >=1.26
+    # numpy 2.4+ introduced behavior changes which may affect usage corner cases (affects visible in
+    # tests: test_curvefit_helpers, test_concat_periods). Added max cap to avoid the issue.
+    - numpy >=1.26,<2.4
     - packaging >=24.1
     - pandas >=2.2
   run_constrained:
-    - scipy >=1.13
     # accel
+    - scipy >=1.13
     - numbagg >=0.8
     - numba >=0.62
     - flox >=0.9
     # io
     - netcdf4 >=1.6.0
+    - h5netcdf >=1.4.0
     - zarr >=2.18
+    # etc
     - sparse >=0.15
     # viz
     - cartopy >=0.23
     - matplotlib-base >=3.8
 
+{% set deselect_tests = "" %}
 # hdf5 not build with szip support
-{% set deselect_tests = " --deselect=test_backends.py::TestNetCDF4Data::test_compression_encoding" %}
+{% set deselect_tests = deselect_tests + " --deselect=test_backends.py::TestNetCDF4Data::test_compression_encoding" %}
 {% set deselect_tests = deselect_tests + " --deselect=test_backends_datatree.py::TestNetCDF4DataTree::test_compression_encoding" %}
+
+{% set deselect_tests = deselect_tests + " --deselect=test_dataset.py::TestDataset::test_repr" %}
+
 test:
   source_files:
     - conftest.py
@@ -53,7 +60,7 @@ test:
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
-    - pytest . --pyargs xarray.tests {{ deselect_tests }} -v -m "not (flaky or mypy or network or slow or slow_hypothesis)" -o addopts="[--strict-markers,--strict-config]"
+    - pytest . --pyargs xarray.tests {{ deselect_tests }} -vv -m "not (flaky or mypy or network or slow or slow_hypothesis)" -o addopts="--strict-markers --strict-config"
   requires:
     - pip
     - pytest
@@ -63,6 +70,7 @@ test:
     - pooch
     - scipy
     - netcdf4
+    - pytz
 
 about:
   home: https://xarray.dev

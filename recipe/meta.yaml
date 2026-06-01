@@ -39,7 +39,20 @@ requirements:
     - sparse >=0.15
     # viz
     - cartopy >=0.23
-    - matplotlib-base >=3.8
+# accel
+- scipy >=1.13
+- numbagg >=0.9
+- numba >=0.62
+- flox >=0.10
+# io
+- netcdf4 >=1.6.0
+- h5netcdf >=1.5.0
+- zarr >=3.0
+# etc
+- sparse >=0.15
+# viz
+- cartopy >=0.23
+- matplotlib-base >=3.8
 
 {% set deselect_tests = "" %}
 # hdf5 not build with szip support

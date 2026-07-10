@@ -40,7 +40,7 @@ requirements:
     # etc
     - sparse >=0.15
     # viz
-    - cartopy >=0.23
+    - cartopy >=0.24
     - matplotlib-base >=3.10
 
 {% set deselect_tests = "" %}

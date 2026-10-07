@@ -1,12 +1,6 @@
 {% set name = "xarray" %}
 {% set version = "2026.9.0" %}
-{% set deselect_tests = "" %}
-{% set deselect_tests = 'deselect_tests + " --deselect=test_backends.py::TestNetCDF4Data::test_compression_encoding"' %}
-{% set deselect_tests = 'deselect_tests + " --deselect=test_backends_datatree.py::TestNetCDF4DataTree::test_compression_encoding"' %}
-{% set deselect_tests = 'deselect_tests + " --deselect=test_backends.py::TestNetCDF4ViaDaskData::test_compression_encoding"' %}
-{% set deselect_tests = 'deselect_tests + " --deselect=test_dataset.py::TestDataset::test_repr"' %}
 
-# hdf5 not build with szip support
 package:
   name: {{ name|lower }}
   version: {{ version }}
@@ -50,6 +44,13 @@ requirements:
     # viz
     - cartopy >=0.24
     - matplotlib-base >=3.10
+
+{% set deselect_tests = "" %}
+# hdf5 not build with szip support
+{% set deselect_tests = deselect_tests + " --deselect=test_backends.py::TestNetCDF4Data::test_compression_encoding" %}
+{% set deselect_tests = deselect_tests + " --deselect=test_backends_datatree.py::TestNetCDF4DataTree::test_compression_encoding" %}
+{% set deselect_tests = deselect_tests + " --deselect=test_backends.py::TestNetCDF4ViaDaskData::test_compression_encoding" %}
+{% set deselect_tests = deselect_tests + " --deselect=test_dataset.py::TestDataset::test_repr" %}
 
 test:
   source_files:

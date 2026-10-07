@@ -21,7 +21,7 @@ requirements:
     - setuptools >=80
     - setuptools_scm >=8
     - setuptools-scm >=10
-    - vcs_versioning
+    - vcs-versioning
   run:
     - python
     # E   DeprecationWarning: The 'generic' unit for NumPy timedelta is deprecated

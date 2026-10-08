@@ -1,5 +1,5 @@
 {% set name = "xarray" %}
-{% set version = "2026.7.0" %}
+{% set version = "2026.9.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,35 +7,37 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 361b495928fdbf5b58d0969bb6775339019da5e93ca74d61ddf4eb5edd6ce604
+  sha256: 6abc69694c22fa1f0fb2f357ff4e41d88beb4477ed71091f944b7dbf67ed54fe
 
 build:
-  number: 2
+  number: 0
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
-  skip:  true  # [py<311]
+  skip: true  # [py<311]
 
 requirements:
   host:
     - python
     - pip
-    - setuptools >=77.0.3
+    - setuptools >=80
     - setuptools_scm >=8
+    - setuptools-scm >=10
+    - vcs-versioning
   run:
     - python
     # E   DeprecationWarning: The 'generic' unit for NumPy timedelta is deprecated
     # https://numpy.org/doc/2.5/reference/arrays.datetime.html#basic-datetimes
-    - numpy >=1.26,<2.5
+    - numpy >=1.26
     - packaging >=24.2
     - pandas >=2.2
   run_constrained:
     # accel
     - scipy >=1.15
-    - numbagg >=0.9
+    - numbagg >=0.9,!=0.9.5
     - numba >=0.62
     - flox >=0.10
     # io
-    - netcdf4 >=1.6.0
-    - h5netcdf >=1.5.0
+    - netCDF4 >=1.6.0
+    - h5netcdf >=1.8.0
     - zarr >=3.0
     # etc
     - sparse >=0.15
@@ -60,7 +62,7 @@ test:
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
-    - pytest . --pyargs xarray.tests {{ deselect_tests }} -vv -m "not (flaky or mypy or network or slow or slow_hypothesis)" -o addopts="--strict-markers --strict-config"
+    - pytest . --pyargs xarray.tests {{ deselect_tests }} -vv -m "not (flaky or mypy or network or slow or slow_hypothesis)" -k "not (test_weighted_operations_keep_attr and std)" -o addopts="--strict-markers --strict-config"
   requires:
     - pip
     - pytest

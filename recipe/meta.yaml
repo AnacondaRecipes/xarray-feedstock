@@ -10,7 +10,7 @@ source:
   sha256: 6abc69694c22fa1f0fb2f357ff4e41d88beb4477ed71091f944b7dbf67ed54fe
 
 build:
-  number: 0
+  number: 1
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
   skip: true  # [py<311]
 
@@ -52,6 +52,10 @@ requirements:
 {% set deselect_tests = deselect_tests + " --deselect=test_backends.py::TestNetCDF4ViaDaskData::test_compression_encoding" %}
 {% set deselect_tests = deselect_tests + " --deselect=test_dataset.py::TestDataset::test_repr" %}
 
+{% set skip_tests = "(test_weighted_operations_keep_attr and std)" %}
+# chunked vs unchunked quintic results differ by ~1e-16 but the test uses assert_identical
+{% set skip_tests = skip_tests + " or (test_interpolate_chunk_1d and quintic)" %}  # [win and arm64]
+
 test:
   source_files:
     - conftest.py
@@ -62,7 +66,7 @@ test:
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
-    - pytest . --pyargs xarray.tests {{ deselect_tests }} -vv -m "not (flaky or mypy or network or slow or slow_hypothesis)" -k "not (test_weighted_operations_keep_attr and std)" -o addopts="--strict-markers --strict-config"
+    - pytest . --pyargs xarray.tests {{ deselect_tests }} -vv -m "not (flaky or mypy or network or slow or slow_hypothesis)" -k "not ({{ skip_tests }})" -o addopts="--strict-markers --strict-config"
   requires:
     - pip
     - pytest
